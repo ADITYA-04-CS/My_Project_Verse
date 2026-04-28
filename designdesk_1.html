@@ -1,0 +1,1594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>DesignDesk — Interior Design Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet"/>
+<style>
+/* ─── RESET ─────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+
+/* ─── ROOT / TOKENS ──────────────────────────── */
+:root{
+  --bg1:#ffd4c2;--bg2:#c9b8ff;--bg3:#a8e6cf;--bg4:#ffc8e0;--bg5:#b8e0ff;
+  --glass:rgba(255,255,255,0.22);
+  --glass-strong:rgba(255,255,255,0.38);
+  --glass-subtle:rgba(255,255,255,0.12);
+  --glass-border:rgba(255,255,255,0.5);
+  --glass-border-soft:rgba(255,255,255,0.28);
+  --shadow:0 8px 32px rgba(80,40,120,0.13);
+  --shadow-lg:0 20px 60px rgba(80,40,120,0.18);
+  --text:#1c1428;
+  --text-2:#5a4e6e;
+  --text-3:#8a7fa0;
+  --white:#ffffff;
+  --accent:#7c5cfc;
+  --accent-2:#ff6b9d;
+  --accent-3:#00c9a7;
+  --accent-warm:#ff8c61;
+  --danger:#ff4f6d;
+  --success:#00c47d;
+  --warn:#ffb020;
+  --r:14px;--r-sm:10px;--r-lg:20px;--r-xl:28px;--r-pill:100px;
+  --font-head:'Outfit',sans-serif;
+  --font-body:'Plus Jakarta Sans',sans-serif;
+  --blur:blur(22px);
+  --t:0.25s cubic-bezier(.4,0,.2,1);
+}
+
+body{
+  font-family:var(--font-body);
+  background:#e8d5f5;
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+  font-size:14px;
+  line-height:1.6;
+}
+
+/* ─── ANIMATED MESH BACKGROUND ───────────────── */
+.mesh-bg{
+  position:fixed;inset:0;z-index:-1;
+  background:linear-gradient(135deg,#ffd4c2 0%,#e8c8ff 25%,#b8e8d8 50%,#ffc8e8 75%,#c8e0ff 100%);
+  background-size:400% 400%;
+  animation:meshMove 12s ease infinite;
+}
+.mesh-bg::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 20%,rgba(255,140,97,0.35) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 60% at 80% 80%,rgba(124,92,252,0.3) 0%,transparent 60%),
+    radial-gradient(ellipse 40% 40% at 60% 20%,rgba(0,201,167,0.25) 0%,transparent 50%),
+    radial-gradient(ellipse 50% 40% at 30% 70%,rgba(255,107,157,0.3) 0%,transparent 55%);
+  animation:blobMove 8s ease-in-out infinite alternate;
+}
+@keyframes meshMove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes blobMove{0%{transform:scale(1) translate(0,0)}100%{transform:scale(1.05) translate(1%,1%)}}
+
+/* ─── PAGE SYSTEM ────────────────────────────── */
+.page{display:none;min-height:100vh;animation:pageIn .35s ease}
+.page.active{display:block}
+@keyframes pageIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* ─── GLASS CARD ─────────────────────────────── */
+.glass{
+  background:var(--glass);
+  backdrop-filter:var(--blur);
+  -webkit-backdrop-filter:var(--blur);
+  border:1px solid var(--glass-border);
+  border-radius:var(--r-lg);
+  box-shadow:var(--shadow);
+}
+.glass-strong{
+  background:var(--glass-strong);
+  backdrop-filter:blur(30px);
+  -webkit-backdrop-filter:blur(30px);
+  border:1px solid var(--glass-border);
+  border-radius:var(--r-lg);
+  box-shadow:var(--shadow-lg);
+}
+.glass-subtle{
+  background:var(--glass-subtle);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border:1px solid var(--glass-border-soft);
+  border-radius:var(--r);
+}
+
+/* ─── BUTTONS ────────────────────────────────── */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  padding:10px 22px;border-radius:var(--r-pill);
+  font-family:var(--font-body);font-size:13px;font-weight:600;
+  letter-spacing:.01em;cursor:pointer;border:none;
+  transition:var(--t);text-decoration:none;white-space:nowrap;
+}
+.btn-primary{
+  background:var(--accent);color:#fff;
+  box-shadow:0 4px 18px rgba(124,92,252,.4);
+}
+.btn-primary:hover{background:#6849e8;transform:translateY(-1px);box-shadow:0 6px 24px rgba(124,92,252,.5)}
+.btn-warm{
+  background:var(--accent-warm);color:#fff;
+  box-shadow:0 4px 18px rgba(255,140,97,.4);
+}
+.btn-warm:hover{background:#e8733e;transform:translateY(-1px)}
+.btn-glass{
+  background:var(--glass-strong);color:var(--text);
+  border:1px solid var(--glass-border);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+}
+.btn-glass:hover{background:rgba(255,255,255,.5);transform:translateY(-1px)}
+.btn-ghost{
+  background:rgba(255,255,255,.15);color:var(--text-2);
+  border:1px solid var(--glass-border-soft);
+}
+.btn-ghost:hover{background:rgba(255,255,255,.3)}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-danger:hover{background:#e8374f}
+.btn-success{background:var(--success);color:#fff}
+.btn-success:hover{background:#00a869}
+.btn-sm{padding:6px 14px;font-size:12px}
+.btn-xs{padding:4px 10px;font-size:11px;border-radius:8px}
+.btn-icon{padding:10px;border-radius:12px}
+
+/* ─── BADGES ─────────────────────────────────── */
+.badge{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 10px;border-radius:var(--r-pill);
+  font-size:11px;font-weight:600;letter-spacing:.03em;
+}
+.badge::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.7}
+.badge-new{background:rgba(124,92,252,.15);color:var(--accent)}
+.badge-review{background:rgba(255,176,32,.15);color:#c97a00}
+.badge-approved{background:rgba(0,196,125,.15);color:#00a055}
+.badge-revision{background:rgba(255,140,97,.15);color:#c05a20}
+.badge-progress{background:rgba(0,201,215,.15);color:#007a85}
+.badge-done{background:rgba(120,120,140,.15);color:#606070}
+
+/* ─── INPUTS ─────────────────────────────────── */
+input,select,textarea{
+  width:100%;padding:11px 16px;
+  background:rgba(255,255,255,.35);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.55);
+  border-radius:var(--r);
+  font-family:var(--font-body);font-size:14px;color:var(--text);
+  outline:none;transition:var(--t);resize:vertical;
+}
+input::placeholder,textarea::placeholder{color:var(--text-3)}
+input:focus,select:focus,textarea:focus{
+  background:rgba(255,255,255,.55);
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(124,92,252,.15);
+}
+select option{background:#f0e8ff;color:var(--text)}
+label{
+  display:block;font-size:11px;font-weight:600;
+  letter-spacing:.06em;text-transform:uppercase;
+  color:var(--text-2);margin-bottom:6px;
+}
+.field{margin-bottom:16px}
+
+/* ─── SCROLLBAR ──────────────────────────────── */
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(124,92,252,.3);border-radius:3px}
+
+
+/* ════════════════════════════════════════════════
+   PAGE 1 — HOME / LANDING
+════════════════════════════════════════════════ */
+.home-page{min-height:100vh}
+
+.home-nav{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 40px;
+  position:relative;z-index:10;
+}
+.logo{
+  font-family:var(--font-head);font-size:22px;font-weight:700;
+  color:var(--text);display:flex;align-items:center;gap:8px;
+}
+.logo-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+}
+.home-nav-links{display:flex;gap:6px}
+.home-nav-links a{
+  padding:8px 16px;border-radius:var(--r-pill);
+  font-size:13px;font-weight:500;color:var(--text-2);
+  text-decoration:none;transition:var(--t);cursor:pointer;
+}
+.home-nav-links a:hover{background:rgba(255,255,255,.4);color:var(--text)}
+.home-nav-actions{display:flex;gap:8px;align-items:center}
+
+/* Hero */
+.hero-section{
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:60px 40px 0;
+  text-align:center;min-height:calc(100vh - 80px);
+  position:relative;
+}
+.hero-pill{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:6px 16px;border-radius:var(--r-pill);
+  background:rgba(255,255,255,.45);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.6);
+  font-size:12px;font-weight:600;color:var(--text-2);
+  margin-bottom:28px;
+  animation:pageIn .5s ease .1s both;
+}
+.hero-pill-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--success);
+  box-shadow:0 0 6px var(--success);
+  animation:blink 1.5s ease infinite;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+.hero-h1{
+  font-family:var(--font-head);
+  font-size:clamp(44px,7vw,80px);
+  font-weight:700;line-height:1.05;
+  color:var(--text);margin-bottom:22px;
+  animation:pageIn .5s ease .2s both;
+}
+.hero-h1 .grad{
+  background:linear-gradient(135deg,var(--accent) 0%,var(--accent-2) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero-sub{
+  font-size:16px;color:var(--text-2);max-width:460px;
+  line-height:1.7;margin:0 auto 36px;
+  animation:pageIn .5s ease .3s both;
+}
+.hero-actions{
+  display:flex;gap:12px;justify-content:center;flex-wrap:wrap;
+  margin-bottom:60px;
+  animation:pageIn .5s ease .4s both;
+}
+
+/* Feature cards on home */
+.home-features{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:16px;max-width:900px;width:100%;margin:0 auto;
+  padding-bottom:60px;
+  animation:pageIn .5s ease .5s both;
+}
+.feat-card{
+  padding:28px 24px;text-align:left;
+  transition:var(--t);cursor:default;
+}
+.feat-card:hover{transform:translateY(-4px);box-shadow:0 20px 48px rgba(80,40,120,.2)}
+.feat-icon{
+  width:44px;height:44px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;margin-bottom:14px;
+}
+.feat-icon-1{background:linear-gradient(135deg,rgba(124,92,252,.2),rgba(124,92,252,.05))}
+.feat-icon-2{background:linear-gradient(135deg,rgba(255,107,157,.2),rgba(255,107,157,.05))}
+.feat-icon-3{background:linear-gradient(135deg,rgba(0,201,167,.2),rgba(0,201,167,.05))}
+.feat-title{font-family:var(--font-head);font-size:16px;font-weight:600;margin-bottom:6px}
+.feat-desc{font-size:13px;color:var(--text-2);line-height:1.6}
+
+/* Home Footer */
+.home-footer{
+  padding:28px 40px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-top:1px solid rgba(255,255,255,.3);
+  font-size:12px;color:var(--text-3);
+}
+
+
+/* ════════════════════════════════════════════════
+   PAGE 2 — AUTH
+════════════════════════════════════════════════ */
+.auth-page{
+  min-height:100vh;display:flex;
+  align-items:center;justify-content:center;
+  padding:40px 20px;
+}
+.auth-card{
+  width:100%;max-width:420px;
+  padding:40px 36px;
+}
+.auth-logo{
+  text-align:center;margin-bottom:28px;
+}
+.auth-logo .logo{justify-content:center;font-size:24px;margin-bottom:6px}
+.auth-logo p{font-size:13px;color:var(--text-2)}
+
+.auth-tabs{
+  display:flex;gap:4px;margin-bottom:28px;
+  background:rgba(255,255,255,.25);
+  border-radius:var(--r-pill);padding:4px;
+}
+.auth-tab{
+  flex:1;padding:8px;border-radius:var(--r-pill);
+  font-size:13px;font-weight:600;text-align:center;
+  cursor:pointer;transition:var(--t);color:var(--text-2);
+}
+.auth-tab.active{
+  background:rgba(255,255,255,.7);color:var(--text);
+  box-shadow:0 2px 12px rgba(80,40,120,.12);
+}
+
+.auth-form{display:none}
+.auth-form.active{display:block}
+
+.role-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.role-card{
+  padding:16px 12px;text-align:center;cursor:pointer;
+  border-radius:var(--r);transition:var(--t);
+  background:rgba(255,255,255,.2);
+  border:2px solid transparent;
+}
+.role-card:hover{background:rgba(255,255,255,.35)}
+.role-card.selected{
+  background:rgba(124,92,252,.12);
+  border-color:var(--accent);
+}
+.role-card .role-emoji{font-size:24px;margin-bottom:6px;display:block}
+.role-card .role-name{font-weight:700;font-size:13px;margin-bottom:2px}
+.role-card .role-desc{font-size:11px;color:var(--text-2)}
+
+.auth-divider{
+  display:flex;align-items:center;gap:12px;
+  margin:16px 0;font-size:11px;color:var(--text-3);
+  text-transform:uppercase;letter-spacing:.08em;
+}
+.auth-divider::before,.auth-divider::after{
+  content:'';flex:1;height:1px;background:rgba(255,255,255,.4);
+}
+.auth-note{
+  text-align:center;margin-top:18px;font-size:12px;color:var(--text-2);
+}
+.auth-note a{color:var(--accent);cursor:pointer;font-weight:600}
+.back-btn{
+  display:flex;align-items:center;gap:6px;
+  font-size:13px;font-weight:500;color:var(--text-2);
+  cursor:pointer;transition:var(--t);text-decoration:none;
+  margin-bottom:20px;
+}
+.back-btn:hover{color:var(--text)}
+
+
+/* ════════════════════════════════════════════════
+   SHARED DASHBOARD LAYOUT
+════════════════════════════════════════════════ */
+.dash-layout{display:flex;min-height:100vh;gap:0}
+
+/* Sidebar */
+.dash-sidebar{
+  width:220px;flex-shrink:0;
+  padding:20px 12px;
+  display:flex;flex-direction:column;gap:4px;
+  position:sticky;top:0;height:100vh;overflow-y:auto;
+  background:rgba(255,255,255,.18);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-right:1px solid rgba(255,255,255,.35);
+}
+.sb-logo{
+  padding:8px 10px 20px;
+  font-family:var(--font-head);font-size:18px;font-weight:700;
+  display:flex;align-items:center;gap:8px;
+}
+.sb-section-label{
+  font-size:10px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--text-3);
+  padding:8px 10px 4px;margin-top:8px;
+}
+.sb-link{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;border-radius:12px;
+  font-size:13px;font-weight:500;color:var(--text-2);
+  cursor:pointer;transition:var(--t);text-decoration:none;
+  position:relative;
+}
+.sb-link:hover{background:rgba(255,255,255,.4);color:var(--text)}
+.sb-link.active{
+  background:rgba(255,255,255,.55);color:var(--text);font-weight:600;
+  box-shadow:0 2px 12px rgba(80,40,120,.1);
+}
+.sb-icon{font-size:16px;width:22px;text-align:center}
+.sb-badge{
+  margin-left:auto;background:var(--accent);color:#fff;
+  width:18px;height:18px;border-radius:50%;
+  font-size:10px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+}
+.sb-user{
+  margin-top:auto;padding:16px 10px 8px;
+  border-top:1px solid rgba(255,255,255,.3);
+}
+.sb-user-row{display:flex;align-items:center;gap:10px}
+.sb-avatar{
+  width:36px;height:36px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-head);font-size:14px;font-weight:700;color:#fff;
+  flex-shrink:0;
+}
+.av-designer{background:linear-gradient(135deg,var(--accent),var(--accent-2))}
+.av-client{background:linear-gradient(135deg,var(--accent-warm),var(--accent-2))}
+.sb-user-name{font-size:13px;font-weight:600}
+.sb-user-role{font-size:11px;color:var(--text-2)}
+
+/* Main */
+.dash-main{flex:1;padding:32px 36px;overflow-y:auto}
+
+.dash-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:28px;
+}
+.dash-greeting{font-size:12px;color:var(--text-2);margin-bottom:4px;font-weight:500}
+.dash-title{
+  font-family:var(--font-head);font-size:26px;font-weight:700;color:var(--text);
+}
+
+/* Stat Row */
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px}
+.stat-card{padding:20px 18px}
+.stat-label{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text-2);margin-bottom:6px}
+.stat-val{font-family:var(--font-head);font-size:28px;font-weight:700;line-height:1;color:var(--text)}
+.stat-sub{font-size:11px;color:var(--text-3);margin-top:4px}
+.stat-accent{color:var(--success)}
+
+/* Content Grid */
+.content-grid{display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:start}
+
+/* Cards */
+.d-card{padding:0;overflow:hidden}
+.d-card-head{
+  padding:18px 22px;
+  border-bottom:1px solid rgba(255,255,255,.4);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.d-card-title{font-family:var(--font-head);font-size:16px;font-weight:600}
+.d-card-body{padding:20px 22px}
+
+/* Project Items */
+.proj-item{
+  padding:16px;border-radius:var(--r);
+  background:rgba(255,255,255,.3);
+  border:1px solid rgba(255,255,255,.5);
+  margin-bottom:12px;transition:var(--t);
+  cursor:pointer;
+}
+.proj-item:last-child{margin-bottom:0}
+.proj-item:hover{background:rgba(255,255,255,.45);transform:translateX(3px)}
+.proj-item-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px}
+.proj-item-name{font-weight:600;font-size:14px;margin-bottom:2px}
+.proj-item-meta{font-size:12px;color:var(--text-2)}
+.proj-progress-row{display:flex;align-items:center;gap:10px}
+.prog-bg{flex:1;height:5px;background:rgba(0,0,0,.08);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;border-radius:3px;transition:width .6s ease}
+.prog-pct{font-size:11px;font-weight:600;color:var(--text-2);min-width:28px;text-align:right}
+
+/* Message/Comment thread */
+.msg-thread{display:flex;flex-direction:column;gap:10px}
+.msg-bubble{
+  padding:10px 14px;border-radius:16px;
+  font-size:13px;line-height:1.6;max-width:85%;
+}
+.msg-designer{
+  background:linear-gradient(135deg,rgba(124,92,252,.15),rgba(255,107,157,.1));
+  border:1px solid rgba(124,92,252,.2);
+  border-bottom-left-radius:4px;
+  align-self:flex-start;
+}
+.msg-client{
+  background:rgba(255,255,255,.5);
+  border:1px solid rgba(255,255,255,.7);
+  border-bottom-right-radius:4px;
+  align-self:flex-end;text-align:right;
+}
+.msg-sender{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+.msg-sender-d{color:var(--accent)}
+.msg-sender-c{color:var(--accent-warm);text-align:right}
+.msg-time{font-size:10px;color:var(--text-3);margin-top:2px}
+.msg-input-row{
+  display:flex;gap:8px;align-items:flex-end;
+  padding:14px 22px;
+  border-top:1px solid rgba(255,255,255,.35);
+}
+.msg-input-row input{margin-bottom:0;font-size:13px}
+
+/* Approval Action Bar */
+.approval-bar{
+  display:flex;gap:8px;flex-wrap:wrap;
+  padding:14px 22px;
+  border-top:1px solid rgba(255,255,255,.35);
+  background:rgba(255,255,255,.15);
+}
+
+/* Timeline */
+.timeline{display:flex;flex-direction:column;gap:0}
+.tl-item{display:flex;gap:12px;padding-bottom:18px;position:relative}
+.tl-item::before{
+  content:'';position:absolute;left:13px;top:26px;bottom:0;
+  width:1px;background:rgba(255,255,255,.4);
+}
+.tl-item:last-child::before{display:none}
+.tl-dot{
+  width:26px;height:26px;border-radius:9px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;border:1px solid rgba(255,255,255,.4);
+  background:rgba(255,255,255,.4);
+}
+.tl-dot-accent{background:rgba(124,92,252,.2);border-color:rgba(124,92,252,.3)}
+.tl-content{}
+.tl-text{font-size:13px;font-weight:500;line-height:1.4}
+.tl-time{font-size:11px;color:var(--text-3);margin-top:2px}
+
+/* Budget mini bars */
+.budget-item{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 0;border-bottom:1px solid rgba(255,255,255,.25);
+}
+.budget-item:last-child{border-bottom:none}
+.bi-label{font-size:12px;color:var(--text-2);width:90px;flex-shrink:0}
+.bi-bar{flex:1;height:6px;background:rgba(0,0,0,.08);border-radius:3px;overflow:hidden}
+.bi-fill{height:100%;border-radius:3px}
+.bi-val{font-size:12px;font-weight:600;width:55px;text-align:right;flex-shrink:0}
+
+/* Notification dot */
+.notif{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--danger);display:inline-block;
+  animation:blink 1.5s ease infinite;margin-left:4px;
+}
+
+
+/* ════════════════════════════════════════════════
+   PAGE 3 — CLIENT VIEW
+════════════════════════════════════════════════ */
+
+/* ════════════════════════════════════════════════
+   PAGE 4 — DESIGNER VIEW
+════════════════════════════════════════════════ */
+.designer-stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px}
+
+/* Admin inquiry list */
+.inquiry-item{
+  display:flex;align-items:center;gap:14px;
+  padding:14px 16px;border-radius:var(--r);
+  background:rgba(255,255,255,.3);border:1px solid rgba(255,255,255,.5);
+  margin-bottom:10px;transition:var(--t);
+}
+.inquiry-item:hover{background:rgba(255,255,255,.45)}
+.inq-avatar{
+  width:40px;height:40px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;font-weight:700;color:#fff;flex-shrink:0;
+}
+.inq-info{flex:1}
+.inq-name{font-weight:600;font-size:14px;margin-bottom:2px}
+.inq-project{font-size:12px;color:var(--text-2)}
+.inq-budget{font-size:12px;font-weight:600;color:var(--accent)}
+.inq-actions{display:flex;gap:6px;flex-shrink:0}
+
+/* Project Detail Modal (slide panel) */
+.detail-panel{
+  position:fixed;right:0;top:0;bottom:0;
+  width:420px;z-index:200;
+  background:rgba(240,230,255,.5);
+  backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);
+  border-left:1px solid rgba(255,255,255,.5);
+  box-shadow:-20px 0 60px rgba(80,40,120,.15);
+  transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);
+  display:flex;flex-direction:column;
+  overflow:hidden;
+}
+.detail-panel.open{transform:translateX(0)}
+.detail-overlay{
+  position:fixed;inset:0;z-index:199;
+  background:rgba(40,20,80,.2);backdrop-filter:blur(2px);
+  display:none;
+}
+.detail-overlay.open{display:block}
+.detail-head{
+  padding:22px 24px;
+  border-bottom:1px solid rgba(255,255,255,.4);
+  display:flex;align-items:flex-start;justify-content:space-between;
+}
+.detail-title{font-family:var(--font-head);font-size:18px;font-weight:700;margin-bottom:4px}
+.detail-meta{font-size:12px;color:var(--text-2)}
+.close-btn{
+  width:32px;height:32px;border-radius:10px;
+  background:rgba(255,255,255,.4);border:none;cursor:pointer;
+  font-size:16px;display:flex;align-items:center;justify-content:center;
+  transition:var(--t);flex-shrink:0;
+}
+.close-btn:hover{background:rgba(255,255,255,.7)}
+.detail-chat{
+  flex:1;overflow-y:auto;padding:18px 24px;
+  display:flex;flex-direction:column;gap:10px;
+}
+.detail-input{
+  padding:16px 24px;
+  border-top:1px solid rgba(255,255,255,.4);
+}
+.detail-input .input-row{display:flex;gap:8px}
+.detail-input input{font-size:13px}
+
+/* Status stepper */
+.status-stepper{
+  display:flex;align-items:center;justify-content:center;
+  gap:0;padding:16px 24px;
+  border-bottom:1px solid rgba(255,255,255,.35);
+  background:rgba(255,255,255,.15);
+}
+.step-item{display:flex;align-items:center;gap:0}
+.step-circle{
+  width:28px;height:28px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;
+  background:rgba(255,255,255,.35);color:var(--text-3);
+  border:2px solid rgba(255,255,255,.5);transition:var(--t);flex-shrink:0;
+}
+.step-circle.done{background:var(--success);color:#fff;border-color:var(--success)}
+.step-circle.active{background:var(--accent);color:#fff;border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(124,92,252,.2)}
+.step-line{width:28px;height:2px;background:rgba(255,255,255,.35)}
+.step-line.done{background:var(--success)}
+
+/* ─── RESPONSIVE ─────────────────────────────── */
+@media(max-width:900px){
+  .home-nav{padding:16px 20px}
+  .home-features{grid-template-columns:1fr;padding:0 20px 40px}
+  .hero-section{padding:40px 20px 0}
+  .how-section{padding:60px 20px}
+  .steps-grid{grid-template-columns:1fr 1fr}
+  .home-footer{padding:20px}
+  .dash-sidebar{
+    position:fixed;left:-220px;z-index:100;
+    transition:left var(--t);top:0;height:100vh;
+  }
+  .dash-sidebar.open{left:0}
+  .dash-main{padding:20px 18px}
+  .stat-row,.designer-stat-row{grid-template-columns:1fr 1fr}
+  .content-grid{grid-template-columns:1fr}
+  .detail-panel{width:100%;border-left:none;border-top:1px solid rgba(255,255,255,.5)}
+  .home-nav-links{display:none}
+}
+</style>
+</head>
+<body>
+<div class="mesh-bg"></div>
+
+<!-- ══════════════════════════════════════
+     PAGE 1 — LANDING
+══════════════════════════════════════ -->
+<div id="page-home" class="page active">
+<div class="home-page">
+
+  <nav class="home-nav">
+    <div class="logo"><div class="logo-dot"></div>DesignDesk</div>
+    <div class="home-nav-links">
+      <a>How it Works</a>
+      <a>Features</a>
+      <a>About</a>
+    </div>
+    <div class="home-nav-actions">
+      <button class="btn btn-glass" onclick="showPage('page-auth')">Sign In</button>
+      <button class="btn btn-primary" onclick="showPage('page-auth')">Get Started</button>
+    </div>
+  </nav>
+
+  <section class="hero-section">
+    <div class="hero-pill">
+      <div class="hero-pill-dot"></div>
+      Built for solo interior designers
+    </div>
+    <h1 class="hero-h1">Your Studio,<br/><span class="grad">Beautifully</span> Managed.</h1>
+    <p class="hero-sub">A simple, elegant workspace for freelance interior designers — manage your clients, projects, approvals and conversations in one place.</p>
+    <div class="hero-actions">
+      <button class="btn btn-primary" style="font-size:14px;padding:13px 28px" onclick="showPage('page-auth')">Start Free Today</button>
+      <button class="btn btn-glass" style="font-size:14px;padding:13px 28px" onclick="showPage('page-client')">See Client View</button>
+    </div>
+
+    <div class="home-features">
+      <div class="feat-card glass">
+        <div class="feat-icon feat-icon-1">🪑</div>
+        <div class="feat-title">Client Management</div>
+        <div class="feat-desc">Keep all your clients, their preferences, and contact details organized in one clean workspace.</div>
+      </div>
+      <div class="feat-card glass">
+        <div class="feat-icon feat-icon-2">💬</div>
+        <div class="feat-title">Live Approvals</div>
+        <div class="feat-desc">Chat directly on each project. Approve designs, request revisions, and keep clients in the loop.</div>
+      </div>
+      <div class="feat-card glass">
+        <div class="feat-icon feat-icon-3">📊</div>
+        <div class="feat-title">Budget Tracking</div>
+        <div class="feat-desc">Track materials, costs, and payments per project. Know exactly where every rupee is going.</div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="home-footer">
+    <div class="logo" style="font-size:16px"><div class="logo-dot"></div>DesignDesk</div>
+    <div>Interior Design Management System · MCA Project · D.Y. Patil University 2025–26</div>
+    <div>Aditya Jangouda &amp; Tanvi Sutar</div>
+  </footer>
+
+</div>
+</div><!-- /page-home -->
+
+
+<!-- ══════════════════════════════════════
+     PAGE 2 — AUTH
+══════════════════════════════════════ -->
+<div id="page-auth" class="page">
+<div class="auth-page">
+  <div class="auth-card glass-strong">
+
+    <div style="margin-bottom:8px">
+      <a class="back-btn" onclick="showPage('page-home')">← Back to home</a>
+    </div>
+
+    <div class="auth-logo">
+      <div class="logo" style="justify-content:center">
+        <div class="logo-dot"></div>DesignDesk
+      </div>
+      <p>Sign in to your workspace</p>
+    </div>
+
+    <div class="auth-tabs">
+      <div class="auth-tab active" onclick="authTab('login')">Sign In</div>
+      <div class="auth-tab" onclick="authTab('register')">Register</div>
+    </div>
+
+    <!-- LOGIN -->
+    <div id="auth-login" class="auth-form active">
+      <div class="role-grid">
+        <div class="role-card selected" onclick="selectRole(this)">
+          <span class="role-emoji">🎨</span>
+          <div class="role-name">Designer</div>
+          <div class="role-desc">Manage studio</div>
+        </div>
+        <div class="role-card" onclick="selectRole(this)">
+          <span class="role-emoji">👤</span>
+          <div class="role-name">Client</div>
+          <div class="role-desc">My projects</div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" placeholder="you@email.com"/>
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" placeholder="••••••••"/>
+      </div>
+      <button class="btn btn-primary" style="width:100%;padding:13px" onclick="handleLogin()">Sign In →</button>
+      <div class="auth-divider">or try demo</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-glass" style="flex:1;font-size:12px" onclick="showPage('page-designer')">Designer Demo</button>
+        <button class="btn btn-warm" style="flex:1;font-size:12px" onclick="showPage('page-client')">Client Demo</button>
+      </div>
+      <div class="auth-note">New here? <a onclick="authTab('register')">Create account</a></div>
+    </div>
+
+    <!-- REGISTER -->
+    <div id="auth-register" class="auth-form">
+      <div class="role-grid">
+        <div class="role-card selected" onclick="selectRole(this)">
+          <span class="role-emoji">🎨</span>
+          <div class="role-name">Designer</div>
+          <div class="role-desc">Solo studio</div>
+        </div>
+        <div class="role-card" onclick="selectRole(this)">
+          <span class="role-emoji">👤</span>
+          <div class="role-name">Client</div>
+          <div class="role-desc">Hire designer</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="field"><label>First Name</label><input placeholder="Aditya"/></div>
+        <div class="field"><label>Last Name</label><input placeholder="Jangouda"/></div>
+      </div>
+      <div class="field"><label>Email</label><input type="email" placeholder="you@email.com"/></div>
+      <div class="field"><label>Phone</label><input type="tel" placeholder="+91 98765 43210"/></div>
+      <div class="field"><label>Password</label><input type="password" placeholder="Min. 8 characters"/></div>
+      <button class="btn btn-primary" style="width:100%;padding:13px" onclick="handleLogin()">Create Account →</button>
+      <div class="auth-note">Already have one? <a onclick="authTab('login')">Sign in</a></div>
+    </div>
+
+  </div>
+</div>
+</div><!-- /page-auth -->
+
+
+<!-- ══════════════════════════════════════
+     PAGE 3 — CLIENT DASHBOARD
+══════════════════════════════════════ -->
+<div id="page-client" class="page">
+<div class="dash-layout">
+
+  <!-- Sidebar -->
+  <aside class="dash-sidebar">
+    <div class="sb-logo"><div class="logo-dot"></div>DesignDesk</div>
+    <div class="sb-section-label">My Workspace</div>
+    <a class="sb-link active"><span class="sb-icon">⊞</span>Overview</a>
+    <a class="sb-link"><span class="sb-icon">📐</span>My Projects</a>
+    <a class="sb-link" onclick="openPanel('project-panel')"><span class="sb-icon">💬</span>Messages<span class="sb-badge">2</span></a>
+    <div class="sb-section-label">Finances</div>
+    <a class="sb-link"><span class="sb-icon">💰</span>Payments</a>
+    <a class="sb-link"><span class="sb-icon">📊</span>Budget</a>
+    <div class="sb-section-label">Account</div>
+    <a class="sb-link"><span class="sb-icon">⚙</span>Settings</a>
+    <a class="sb-link" onclick="showPage('page-home')"><span class="sb-icon">←</span>Home</a>
+    <div class="sb-user">
+      <div class="sb-user-row">
+        <div class="sb-avatar av-client">AJ</div>
+        <div>
+          <div class="sb-user-name">Aditya J.</div>
+          <div class="sb-user-role">Client</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="dash-main">
+
+    <div class="dash-header">
+      <div>
+        <div class="dash-greeting">Good morning, Aditya 👋</div>
+        <div class="dash-title">My Dashboard</div>
+      </div>
+      <button class="btn btn-primary" onclick="openPanel('inquiry-panel')">+ New Request</button>
+    </div>
+
+    <!-- Stats -->
+    <div class="stat-row">
+      <div class="stat-card glass">
+        <div class="stat-label">My Projects</div>
+        <div class="stat-val">3</div>
+        <div class="stat-sub">2 active</div>
+      </div>
+      <div class="stat-card glass">
+        <div class="stat-label">Total Budget</div>
+        <div class="stat-val" style="font-size:22px">₹28L</div>
+        <div class="stat-sub stat-accent">₹9.6L remaining</div>
+      </div>
+      <div class="stat-card glass">
+        <div class="stat-label">Avg. Progress</div>
+        <div class="stat-val">64<span style="font-size:16px;color:var(--text-2)">%</span></div>
+        <div class="stat-sub stat-accent">↑ 12% this week</div>
+      </div>
+      <div class="stat-card glass">
+        <div class="stat-label">Pending Action</div>
+        <div class="stat-val" style="color:var(--accent)">2</div>
+        <div class="stat-sub" style="color:var(--accent)">Needs approval</div>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content-grid">
+
+      <!-- Left: Projects -->
+      <div style="display:flex;flex-direction:column;gap:20px">
+
+        <!-- Active Projects -->
+        <div class="d-card glass">
+          <div class="d-card-head">
+            <div class="d-card-title">My Projects</div>
+            <span class="badge badge-new">3 total</span>
+          </div>
+          <div class="d-card-body">
+
+            <div class="proj-item" onclick="openPanel('project-panel')">
+              <div class="proj-item-top">
+                <div>
+                  <div class="proj-item-name">🛋 Living Room Redesign</div>
+                  <div class="proj-item-meta">Residential · Flat 4B, Pune</div>
+                </div>
+                <span class="badge badge-approved">Approved</span>
+              </div>
+              <div class="proj-progress-row">
+                <div class="prog-bg"><div class="prog-fill" style="width:72%;background:linear-gradient(90deg,var(--accent),var(--accent-2))"></div></div>
+                <div class="prog-pct">72%</div>
+              </div>
+              <div style="margin-top:8px;font-size:12px;color:var(--text-2)">💬 Designer: "Sofa swatches are ready for your review."</div>
+            </div>
+
+            <div class="proj-item" onclick="openPanel('project-panel')">
+              <div class="proj-item-top">
+                <div>
+                  <div class="proj-item-name">🍽 Dining Space Overhaul</div>
+                  <div class="proj-item-meta">Residential · Kolhapur Villa</div>
+                </div>
+                <span class="badge badge-revision">Revision</span>
+              </div>
+              <div class="proj-progress-row">
+                <div class="prog-bg"><div class="prog-fill" style="width:45%;background:linear-gradient(90deg,var(--accent-warm),#ffb347)"></div></div>
+                <div class="prog-pct">45%</div>
+              </div>
+              <div style="margin-top:8px;font-size:12px;color:var(--text-2)">💬 Designer: "Please confirm the marble shade choice."</div>
+            </div>
+
+            <div class="proj-item" onclick="openPanel('inquiry-panel')">
+              <div class="proj-item-top">
+                <div>
+                  <div class="proj-item-name">🪴 Office Lounge — TechHub</div>
+                  <div class="proj-item-meta">Commercial · Pune</div>
+                </div>
+                <span class="badge badge-review">Under Review</span>
+              </div>
+              <div class="proj-progress-row">
+                <div class="prog-bg"><div class="prog-fill" style="width:18%;background:linear-gradient(90deg,var(--accent-3),#5ee7d0)"></div></div>
+                <div class="prog-pct">18%</div>
+              </div>
+              <div style="margin-top:8px;font-size:12px;color:var(--text-2);display:flex;align-items:center;gap:4px">⏳ Waiting for designer approval<span class="notif"></span></div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- New Request Quick Form -->
+        <div class="d-card glass" id="client-inquiry-card">
+          <div class="d-card-head">
+            <div class="d-card-title">Submit New Request</div>
+            <span class="badge badge-new">Step 1/3</span>
+          </div>
+          <div class="d-card-body">
+
+            <!-- Step indicators -->
+            <div class="status-stepper" style="padding:0 0 16px;border:none;background:none;justify-content:flex-start;gap:6px">
+              <div class="step-item">
+                <div class="step-circle done">✓</div>
+                <div class="step-line done"></div>
+              </div>
+              <div class="step-item">
+                <div class="step-circle active">2</div>
+                <div class="step-line"></div>
+              </div>
+              <div class="step-item">
+                <div class="step-circle">3</div>
+              </div>
+              <span style="font-size:12px;color:var(--text-2);margin-left:10px">Project Details</span>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+              <div class="field"><label>Project Name</label><input placeholder="e.g. Bedroom Redesign"/></div>
+              <div class="field">
+                <label>Project Type</label>
+                <select><option>Residential — Apartment</option><option>Residential — Villa</option><option>Commercial — Office</option><option>Commercial — Retail / Café</option><option>Hospitality</option></select>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+              <div class="field"><label>City / Location</label><input placeholder="Pune, Maharashtra"/></div>
+              <div class="field"><label>Budget (₹)</label><input placeholder="e.g. 8,00,000"/></div>
+            </div>
+            <div class="field"><label>Describe Your Vision</label><textarea rows="3" placeholder="Tell me about your style preferences, room size, any special needs…"></textarea></div>
+            <div style="display:flex;gap:10px;justify-content:flex-end">
+              <button class="btn btn-glass">Save Draft</button>
+              <button class="btn btn-primary" onclick="showToast('🎉 Request submitted! Priya will review it shortly.')">Send to Designer →</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right: Designer Card + Timeline -->
+      <div style="display:flex;flex-direction:column;gap:20px">
+
+        <!-- My Designer -->
+        <div class="d-card glass">
+          <div class="d-card-body" style="text-align:center;padding:24px">
+            <div style="width:60px;height:60px;border-radius:18px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-size:24px;color:#fff;font-weight:700;margin:0 auto 12px;font-family:var(--font-head)">P</div>
+            <div style="font-family:var(--font-head);font-size:18px;font-weight:700;margin-bottom:2px">Priya Sharma</div>
+            <div style="font-size:13px;color:var(--text-2);margin-bottom:16px">Your Interior Designer ✦</div>
+            <div style="display:flex;justify-content:center;gap:20px;margin-bottom:16px">
+              <div style="text-align:center"><div style="font-family:var(--font-head);font-size:20px;font-weight:700">48</div><div style="font-size:11px;color:var(--text-2)">Projects</div></div>
+              <div style="width:1px;background:rgba(255,255,255,.4)"></div>
+              <div style="text-align:center"><div style="font-family:var(--font-head);font-size:20px;font-weight:700">4.9⭐</div><div style="font-size:11px;color:var(--text-2)">Rating</div></div>
+              <div style="width:1px;background:rgba(255,255,255,.4)"></div>
+              <div style="text-align:center"><div style="font-family:var(--font-head);font-size:20px;font-weight:700">8yr</div><div style="font-size:11px;color:var(--text-2)">Exp.</div></div>
+            </div>
+            <button class="btn btn-primary" style="width:100%" onclick="openPanel('project-panel')">💬 Message Priya</button>
+          </div>
+        </div>
+
+        <!-- Activity -->
+        <div class="d-card glass">
+          <div class="d-card-head"><div class="d-card-title">Recent Activity</div></div>
+          <div class="d-card-body">
+            <div class="timeline">
+              <div class="tl-item">
+                <div class="tl-dot tl-dot-accent">✦</div>
+                <div class="tl-content">
+                  <div class="tl-text">Designer approved your Living Room concept</div>
+                  <div class="tl-time">2 hours ago</div>
+                </div>
+              </div>
+              <div class="tl-item">
+                <div class="tl-dot">💬</div>
+                <div class="tl-content">
+                  <div class="tl-text">New message on Dining project</div>
+                  <div class="tl-time">Yesterday, 4:30 PM</div>
+                </div>
+              </div>
+              <div class="tl-item">
+                <div class="tl-dot">💰</div>
+                <div class="tl-content">
+                  <div class="tl-text">Payment of ₹2.5L confirmed</div>
+                  <div class="tl-time">3 days ago</div>
+                </div>
+              </div>
+              <div class="tl-item">
+                <div class="tl-dot">📋</div>
+                <div class="tl-content">
+                  <div class="tl-text">Office Lounge request submitted</div>
+                  <div class="tl-time">4 days ago</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Budget -->
+        <div class="d-card glass">
+          <div class="d-card-head">
+            <div class="d-card-title">Budget Split</div>
+            <span style="font-size:12px;font-weight:600;color:var(--accent)">₹28L total</span>
+          </div>
+          <div class="d-card-body">
+            <div class="budget-item">
+              <div class="bi-label">Furniture</div>
+              <div class="bi-bar"><div class="bi-fill" style="width:65%;background:linear-gradient(90deg,var(--accent),var(--accent-2))"></div></div>
+              <div class="bi-val">₹8.6L</div>
+            </div>
+            <div class="budget-item">
+              <div class="bi-label">Materials</div>
+              <div class="bi-bar"><div class="bi-fill" style="width:42%;background:linear-gradient(90deg,var(--accent-3),#5ee7d0)"></div></div>
+              <div class="bi-val">₹4.2L</div>
+            </div>
+            <div class="budget-item">
+              <div class="bi-label">Labour</div>
+              <div class="bi-bar"><div class="bi-fill" style="width:38%;background:linear-gradient(90deg,var(--accent-warm),#ffb347)"></div></div>
+              <div class="bi-val">₹3.8L</div>
+            </div>
+            <div class="budget-item">
+              <div class="bi-label">Lighting</div>
+              <div class="bi-bar"><div class="bi-fill" style="width:20%;background:linear-gradient(90deg,#ff6b9d,#ff9a8b)"></div></div>
+              <div class="bi-val">₹1.8L</div>
+            </div>
+            <div style="padding-top:12px;margin-top:4px;border-top:1px solid rgba(255,255,255,.3);display:flex;justify-content:space-between;font-size:13px">
+              <span style="color:var(--text-2)">Remaining</span>
+              <span style="color:var(--success);font-weight:700">₹9.6L</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /content-grid -->
+
+  </main>
+</div>
+</div><!-- /page-client -->
+
+
+<!-- ══════════════════════════════════════
+     PAGE 4 — DESIGNER DASHBOARD
+══════════════════════════════════════ -->
+<div id="page-designer" class="page">
+<div class="dash-layout">
+
+  <!-- Sidebar -->
+  <aside class="dash-sidebar">
+    <div class="sb-logo"><div class="logo-dot"></div>DesignDesk</div>
+    <div class="sb-section-label">My Studio</div>
+    <a class="sb-link active"><span class="sb-icon">⊞</span>Dashboard</a>
+    <a class="sb-link"><span class="sb-icon">👥</span>My Clients</a>
+    <a class="sb-link"><span class="sb-icon">📐</span>Projects</a>
+    <a class="sb-link" onclick="openPanel('project-panel')"><span class="sb-icon">💬</span>Messages<span class="sb-badge">3</span></a>
+    <div class="sb-section-label">Manage</div>
+    <a class="sb-link"><span class="sb-icon">🪵</span>Materials</a>
+    <a class="sb-link"><span class="sb-icon">💰</span>Payments</a>
+    <a class="sb-link"><span class="sb-icon">📊</span>Reports</a>
+    <div class="sb-section-label">Account</div>
+    <a class="sb-link"><span class="sb-icon">⚙</span>Settings</a>
+    <a class="sb-link" onclick="showPage('page-home')"><span class="sb-icon">←</span>Home</a>
+    <div class="sb-user">
+      <div class="sb-user-row">
+        <div class="sb-avatar av-designer">P</div>
+        <div>
+          <div class="sb-user-name">Priya Sharma</div>
+          <div class="sb-user-role">Interior Designer</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="dash-main">
+
+    <div class="dash-header">
+      <div>
+        <div class="dash-greeting">Your studio overview, Priya 🎨</div>
+        <div class="dash-title">Designer Dashboard</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-glass btn-sm" onclick="showPage('page-client')">Client View</button>
+        <button class="btn btn-primary btn-sm">+ Add Client</button>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stat-row">
+      <div class="stat-card glass">
+        <div class="stat-label">Total Clients</div>
+        <div class="stat-val">8</div>
+        <div class="stat-sub">2 new this month</div>
+      </div>
+      <div class="stat-card glass">
+        <div class="stat-label">Active Projects</div>
+        <div class="stat-val">6</div>
+        <div class="stat-sub stat-accent">All on track</div>
+      </div>
+      <div class="stat-card glass">
+        <div class="stat-label">Pending Approvals</div>
+        <div class="stat-val" style="color:var(--accent-warm)">3<span class="notif"></span></div>
+        <div class="stat-sub" style="color:var(--accent-warm)">Need your review</div>
+      </div>
+      <div class="stat-card glass">
+        <div class="stat-label">This Month</div>
+        <div class="stat-val" style="font-size:22px">₹4.2L</div>
+        <div class="stat-sub stat-accent">↑ 18% vs last</div>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content-grid">
+
+      <!-- Left: Inquiries + Active Projects -->
+      <div style="display:flex;flex-direction:column;gap:20px">
+
+        <!-- New Inquiries -->
+        <div class="d-card glass">
+          <div class="d-card-head">
+            <div class="d-card-title">Pending Inquiries <span class="notif"></span></div>
+            <span class="badge badge-review">3 new</span>
+          </div>
+          <div class="d-card-body">
+
+            <div class="inquiry-item">
+              <div class="inq-avatar" style="background:linear-gradient(135deg,#ff8c61,#ff6b9d)">AJ</div>
+              <div class="inq-info">
+                <div class="inq-name">Aditya Jangouda</div>
+                <div class="inq-project">Office Lounge — Commercial · Pune</div>
+              </div>
+              <div class="inq-budget">₹5.5L</div>
+              <div class="inq-actions">
+                <button class="btn btn-success btn-xs" onclick="showToast('✅ Project approved! Aditya has been notified.')">Approve</button>
+                <button class="btn btn-glass btn-xs" onclick="openPanel('project-panel')">Chat</button>
+                <button class="btn btn-danger btn-xs" onclick="showToast('❌ Inquiry declined. Client notified.')">Decline</button>
+              </div>
+            </div>
+
+            <div class="inquiry-item">
+              <div class="inq-avatar" style="background:linear-gradient(135deg,#7c5cfc,#c084fc)">PS</div>
+              <div class="inq-info">
+                <div class="inq-name">Priya Sethi</div>
+                <div class="inq-project">Master Bedroom Redesign · Mumbai</div>
+              </div>
+              <div class="inq-budget">₹8.5L</div>
+              <div class="inq-actions">
+                <button class="btn btn-success btn-xs" onclick="showToast('✅ Project approved! Client notified.')">Approve</button>
+                <button class="btn btn-glass btn-xs" onclick="openPanel('project-panel')">Chat</button>
+                <button class="btn btn-glass btn-xs" onclick="showToast('📝 Revision request sent.')">Revise</button>
+              </div>
+            </div>
+
+            <div class="inquiry-item">
+              <div class="inq-avatar" style="background:linear-gradient(135deg,#00c9a7,#3b9eff)">KI</div>
+              <div class="inq-info">
+                <div class="inq-name">Kavya Iyer</div>
+                <div class="inq-project">Boutique Café Interior · Nashik</div>
+              </div>
+              <div class="inq-budget">₹14L</div>
+              <div class="inq-actions">
+                <button class="btn btn-success btn-xs" onclick="showToast('✅ Project approved! Kavya notified.')">Approve</button>
+                <button class="btn btn-glass btn-xs" onclick="openPanel('project-panel')">Chat</button>
+                <button class="btn btn-danger btn-xs" onclick="showToast('❌ Inquiry declined.')">Decline</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Active Projects -->
+        <div class="d-card glass">
+          <div class="d-card-head">
+            <div class="d-card-title">Active Projects</div>
+            <button class="btn btn-ghost btn-sm">Manage All</button>
+          </div>
+          <div class="d-card-body">
+
+            <div class="proj-item" onclick="openPanel('project-panel')">
+              <div class="proj-item-top">
+                <div>
+                  <div class="proj-item-name">🛋 Living Room — Aditya J.</div>
+                  <div class="proj-item-meta">Residential · Pune · ₹28L</div>
+                </div>
+                <span class="badge badge-approved">In Progress</span>
+              </div>
+              <div class="proj-progress-row">
+                <div class="prog-bg"><div class="prog-fill" style="width:72%;background:linear-gradient(90deg,var(--accent),var(--accent-2))"></div></div>
+                <div class="prog-pct">72%</div>
+              </div>
+            </div>
+
+            <div class="proj-item" onclick="openPanel('project-panel')">
+              <div class="proj-item-top">
+                <div>
+                  <div class="proj-item-name">🍽 Dining Space — Rohit M.</div>
+                  <div class="proj-item-meta">Residential · Kolhapur · ₹18L</div>
+                </div>
+                <span class="badge badge-revision">Needs Response</span>
+              </div>
+              <div class="proj-progress-row">
+                <div class="prog-bg"><div class="prog-fill" style="width:45%;background:linear-gradient(90deg,var(--accent-warm),#ffb347)"></div></div>
+                <div class="prog-pct">45%</div>
+              </div>
+            </div>
+
+            <div class="proj-item" onclick="openPanel('project-panel')">
+              <div class="proj-item-top">
+                <div>
+                  <div class="proj-item-name">🏢 Ashwood Penthouse — Mr. Desai</div>
+                  <div class="proj-item-meta">Luxury Residential · Pune · ₹42L</div>
+                </div>
+                <span class="badge badge-approved">On Track</span>
+              </div>
+              <div class="proj-progress-row">
+                <div class="prog-bg"><div class="prog-fill" style="width:80%;background:linear-gradient(90deg,var(--success),#5ee7d0)"></div></div>
+                <div class="prog-pct">80%</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right: Material Stock + Activity -->
+      <div style="display:flex;flex-direction:column;gap:20px">
+
+        <!-- Quick Actions -->
+        <div class="d-card glass">
+          <div class="d-card-body" style="display:flex;flex-direction:column;gap:8px">
+            <button class="btn btn-primary" style="width:100%" onclick="showToast('📋 Report generated!')">📊 Generate Report</button>
+            <button class="btn btn-warm" style="width:100%" onclick="openPanel('project-panel')">💬 Open Chat</button>
+            <button class="btn btn-glass" style="width:100%">🪵 Update Materials</button>
+            <button class="btn btn-glass" style="width:100%">💰 Record Payment</button>
+          </div>
+        </div>
+
+        <!-- Material Stock -->
+        <div class="d-card glass">
+          <div class="d-card-head">
+            <div class="d-card-title">Material Stock</div>
+            <span class="badge badge-revision">2 low</span>
+          </div>
+          <div class="d-card-body">
+            <div class="budget-item">
+              <div class="bi-label">Italian Marble</div>
+              <div class="bi-bar"><div class="bi-fill" style="width:70%;background:linear-gradient(90deg,var(--accent),var(--accent-2))"></div></div>
+              <div class="bi-val" style="font-size:11px">350 sqft</div>
+            </div>
+            <div class="budget-item">
+              <div class="bi-label">Teak Veneer</div>
+              <div class="bi-bar"><div class="bi-fill" style="width:18%;background:var(--danger)"></div></div>
+              <div class="bi-val" style="font-size:11px;color:var(--danger)">42sqft ⚠</div>
+            </div>
+            <div class="budget-item">
+              <div class="bi-label">Pendants</div>
+              <div class="bi-bar"><div class="bi-fill" style="width:55%;background:linear-gradient(90deg,#3b9eff,#7ec8ff)"></div></div>
+              <div class="bi-val" style="font-size:11px">22 units</div>
+            </div>
+            <div class="budget-item">
+              <div class="bi-label">Linen Fabric</div>
+              <div class="bi-bar"><div class="bi-fill" style="width:14%;background:var(--danger)"></div></div>
+              <div class="bi-val" style="font-size:11px;color:var(--danger)">8m ⚠</div>
+            </div>
+            <div class="budget-item">
+              <div class="bi-label">Cement</div>
+              <div class="bi-bar"><div class="bi-fill" style="width:85%;background:linear-gradient(90deg,var(--success),#5ee7d0)"></div></div>
+              <div class="bi-val" style="font-size:11px">120 bags</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="d-card glass">
+          <div class="d-card-head"><div class="d-card-title">Recent Activity</div></div>
+          <div class="d-card-body">
+            <div class="timeline">
+              <div class="tl-item">
+                <div class="tl-dot tl-dot-accent">✦</div>
+                <div class="tl-content">
+                  <div class="tl-text">Approved: Kavya Iyer's café project</div>
+                  <div class="tl-time">10 min ago</div>
+                </div>
+              </div>
+              <div class="tl-item">
+                <div class="tl-dot">📋</div>
+                <div class="tl-content">
+                  <div class="tl-text">New inquiry from Priya Sethi</div>
+                  <div class="tl-time">1 hour ago</div>
+                </div>
+              </div>
+              <div class="tl-item">
+                <div class="tl-dot">💰</div>
+                <div class="tl-content">
+                  <div class="tl-text">₹5L payment — Ashwood Project</div>
+                  <div class="tl-time">3 hours ago</div>
+                </div>
+              </div>
+              <div class="tl-item">
+                <div class="tl-dot">💬</div>
+                <div class="tl-content">
+                  <div class="tl-text">Aditya replied on Living Room</div>
+                  <div class="tl-time">Yesterday</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+</div>
+</div><!-- /page-designer -->
+
+
+<!-- ══════════════════════════════════════
+     SLIDE PANEL — PROJECT CHAT / DETAIL
+══════════════════════════════════════ -->
+<div class="detail-overlay" id="overlay" onclick="closePanel()"></div>
+
+<div class="detail-panel" id="project-panel">
+  <!-- Status Stepper -->
+  <div class="status-stepper">
+    <div class="step-item">
+      <div class="step-circle done" title="Submitted">✓</div>
+      <div class="step-line done"></div>
+    </div>
+    <div class="step-item">
+      <div class="step-circle done" title="Reviewed">✓</div>
+      <div class="step-line done"></div>
+    </div>
+    <div class="step-item">
+      <div class="step-circle active" title="Approved">3</div>
+      <div class="step-line"></div>
+    </div>
+    <div class="step-item">
+      <div class="step-circle" title="In Progress">4</div>
+      <div class="step-line"></div>
+    </div>
+    <div class="step-item">
+      <div class="step-circle" title="Complete">✓</div>
+    </div>
+  </div>
+
+  <div class="detail-head">
+    <div>
+      <div class="detail-title">🛋 Living Room Redesign</div>
+      <div class="detail-meta">Aditya Jangouda · Residential · ₹28L · 72% progress</div>
+      <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
+        <span class="badge badge-approved">Approved</span>
+        <span class="badge badge-progress">In Progress</span>
+      </div>
+    </div>
+    <button class="close-btn" onclick="closePanel()">✕</button>
+  </div>
+
+  <!-- Chat -->
+  <div class="detail-chat" id="chat-messages">
+
+    <div style="text-align:center;font-size:11px;color:var(--text-3);padding:4px 0">
+      Mon, 21 Apr · Project Started
+    </div>
+
+    <div>
+      <div class="msg-sender msg-sender-d">🎨 Priya — Designer</div>
+      <div class="msg-bubble msg-designer">Hi Aditya! I've reviewed your project brief. Your vision for a modern-minimal living room sounds amazing. I'm approving this and we'll get started! 🎉</div>
+      <div class="msg-time">Mon 21 Apr, 10:00 AM</div>
+    </div>
+
+    <div style="align-self:flex-end;text-align:right">
+      <div class="msg-sender msg-sender-c">👤 Aditya — Client</div>
+      <div class="msg-bubble msg-client">That's great news! Can't wait to see the concept board.</div>
+      <div class="msg-time" style="text-align:right">Mon 21 Apr, 10:18 AM</div>
+    </div>
+
+    <div>
+      <div class="msg-sender msg-sender-d">🎨 Priya — Designer</div>
+      <div class="msg-bubble msg-designer">Here's what I'm thinking — warm neutrals, travertine coffee table, velvet sofa in sage green. Shall I finalize the material list?</div>
+      <div class="msg-time">Tue 22 Apr, 2:15 PM</div>
+    </div>
+
+    <div style="align-self:flex-end;text-align:right">
+      <div class="msg-sender msg-sender-c">👤 Aditya — Client</div>
+      <div class="msg-bubble msg-client">Love the sage green! Can we maybe do dusty rose instead? Would match our curtains.</div>
+      <div class="msg-time" style="text-align:right">Tue 22 Apr, 3:40 PM</div>
+    </div>
+
+    <div>
+      <div class="msg-sender msg-sender-d">🎨 Priya — Designer</div>
+      <div class="msg-bubble msg-designer">Dusty rose is a wonderful choice! I'll send you sofa swatches for final confirmation. 🌸</div>
+      <div class="msg-time">Today, 9:00 AM</div>
+    </div>
+
+  </div>
+
+  <!-- Action Bar (for designer) -->
+  <div class="approval-bar" id="designer-actions">
+    <button class="btn btn-success btn-sm" onclick="showToast('✅ Stage approved! Progress updated.')">✓ Approve Stage</button>
+    <button class="btn btn-glass btn-sm" onclick="showToast('📝 Revision sent to client.')">↩ Request Revision</button>
+    <button class="btn btn-ghost btn-sm" onclick="showToast('📊 Report generated.')">📊 Report</button>
+    <button class="btn btn-danger btn-sm" onclick="showToast('⏸ Project paused.')">⏸ Pause</button>
+  </div>
+
+  <!-- Message Input -->
+  <div class="detail-input">
+    <div class="input-row">
+      <input type="text" id="chat-input" placeholder="Type a message…" onkeydown="if(event.key==='Enter')sendMsg()"/>
+      <button class="btn btn-primary btn-icon" onclick="sendMsg()" style="padding:11px 16px">→</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Inquiry Panel (alternate slide content) -->
+<div class="detail-panel" id="inquiry-panel">
+  <div class="detail-head">
+    <div>
+      <div class="detail-title">New Project Request</div>
+      <div class="detail-meta">Tell Priya about your vision</div>
+    </div>
+    <button class="close-btn" onclick="closePanel()">✕</button>
+  </div>
+  <div class="detail-chat" style="overflow-y:auto;padding:24px">
+    <div class="field"><label>Project Name</label><input placeholder="e.g. Master Bedroom Redesign"/></div>
+    <div class="field">
+      <label>Project Type</label>
+      <select><option>Residential — Apartment</option><option>Residential — Villa</option><option>Commercial — Office</option><option>Hospitality</option></select>
+    </div>
+    <div class="field"><label>Location</label><input placeholder="Pune, Maharashtra"/></div>
+    <div class="field"><label>Budget (₹)</label><input placeholder="e.g. 12,00,000"/></div>
+    <div class="field"><label>Timeline</label>
+      <select><option>Flexible (3–6 months)</option><option>Rush (1–2 months)</option><option>Long-term (6+ months)</option></select>
+    </div>
+    <div class="field"><label>Your Vision</label><textarea rows="4" placeholder="Describe style preferences, mood, colors, any inspiration…"></textarea></div>
+    <div class="field"><label>Room Photos (optional)</label>
+      <div style="border:2px dashed rgba(255,255,255,.5);border-radius:var(--r);padding:28px;text-align:center;cursor:pointer;background:rgba(255,255,255,.15)" onclick="showToast('📸 Upload feature coming soon!')">
+        <div style="font-size:28px;margin-bottom:8px">📷</div>
+        <div style="font-size:13px;color:var(--text-2)">Tap to upload photos</div>
+        <div style="font-size:11px;color:var(--text-3)">PNG, JPG · Up to 10MB each</div>
+      </div>
+    </div>
+  </div>
+  <div style="padding:16px 24px;border-top:1px solid rgba(255,255,255,.35);display:flex;gap:8px">
+    <button class="btn btn-glass" style="flex:1" onclick="closePanel()">Cancel</button>
+    <button class="btn btn-primary" style="flex:2" onclick="showToast('🎉 Request sent to Priya! She\'ll reply soon.');closePanel()">Send Request →</button>
+  </div>
+</div>
+
+
+<!-- ── TOAST ──────────────────────────────── -->
+<div id="toast" style="
+  position:fixed;bottom:28px;left:50%;
+  transform:translateX(-50%) translateY(80px);
+  background:rgba(255,255,255,.6);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,.8);
+  padding:13px 24px;border-radius:var(--r-pill);
+  font-size:14px;font-weight:500;color:var(--text);
+  box-shadow:0 8px 32px rgba(80,40,120,.2);
+  transition:transform .4s cubic-bezier(.4,0,.2,1);
+  z-index:9999;white-space:nowrap;
+">🎉 <span id="toast-msg">Done!</span></div>
+
+
+<script>
+/* PAGE NAV */
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+  closePanel();
+}
+
+/* AUTH TABS */
+function authTab(tab){
+  document.querySelectorAll('.auth-tab').forEach((t,i)=>{
+    t.classList.toggle('active',(i===0&&tab==='login')||(i===1&&tab==='register'));
+  });
+  document.getElementById('auth-login').classList.toggle('active',tab==='login');
+  document.getElementById('auth-register').classList.toggle('active',tab==='register');
+}
+
+/* ROLE SELECT */
+function selectRole(el){
+  el.parentElement.querySelectorAll('.role-card').forEach(r=>r.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+/* LOGIN REDIRECT */
+function handleLogin(){
+  const selected=document.querySelector('.role-card.selected .role-name');
+  if(selected&&selected.textContent==='Designer') showPage('page-designer');
+  else showPage('page-client');
+}
+
+/* SLIDE PANEL */
+function openPanel(id){
+  closePanel(false);
+  document.getElementById(id).classList.add('open');
+  document.getElementById('overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closePanel(restore=true){
+  document.querySelectorAll('.detail-panel').forEach(p=>p.classList.remove('open'));
+  document.getElementById('overlay').classList.remove('open');
+  if(restore) document.body.style.overflow='';
+}
+
+/* SIDEBAR LINKS */
+document.querySelectorAll('.sb-link').forEach(link=>{
+  link.addEventListener('click',function(){
+    if(!this.getAttribute('onclick')){
+      this.closest('.dash-sidebar').querySelectorAll('.sb-link').forEach(l=>l.classList.remove('active'));
+      this.classList.add('active');
+    }
+  });
+});
+
+/* CHAT */
+const chatColors=['designer','client'];
+let chatMode='client'; // toggle per page
+function sendMsg(){
+  const input=document.getElementById('chat-input');
+  const text=input.value.trim();
+  if(!text) return;
+  const chat=document.getElementById('chat-messages');
+  const isDesigner=document.getElementById('page-designer').classList.contains('active');
+  const wrap=document.createElement('div');
+  if(isDesigner){
+    wrap.innerHTML=`
+      <div class="msg-sender msg-sender-d">🎨 Priya — Designer</div>
+      <div class="msg-bubble msg-designer">${text}</div>
+      <div class="msg-time">Just now</div>`;
+  } else {
+    wrap.style.cssText='align-self:flex-end;text-align:right';
+    wrap.innerHTML=`
+      <div class="msg-sender msg-sender-c">👤 Aditya — Client</div>
+      <div class="msg-bubble msg-client">${text}</div>
+      <div class="msg-time" style="text-align:right">Just now</div>`;
+  }
+  chat.appendChild(wrap);
+  chat.scrollTop=chat.scrollHeight;
+  input.value='';
+}
+
+/* TOAST */
+function showToast(msg){
+  const t=document.getElementById('toast');
+  document.getElementById('toast-msg').textContent=msg;
+  t.style.transform='translateX(-50%) translateY(0)';
+  setTimeout(()=>t.style.transform='translateX(-50%) translateY(80px)',3200);
+}
+</script>
+</body>
+</html>
